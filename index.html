@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuMap - Планировщик путешествий по России</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+        
+        .logo span {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 8px 15px;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1536514072410-5019a3c69182?w=1400');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 30px;
+            text-align: center;
+            border-radius: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: 800;
+        }
+        
+        .hero p {
+            font-size: 22px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #1e3c72;
+            border-bottom: 4px solid #2a5298;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1e3c72;
+            font-size: 16px;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 4px rgba(42,82,152,0.1);
+            background: white;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(30,60,114,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30,60,114,0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+        
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .place-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .place-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .place-image {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .place-card:hover .place-image {
+            transform: scale(1.05);
+        }
+        
+        .place-info {
+            padding: 25px;
+        }
+        
+        .place-info h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #1e3c72;
+        }
+        
+        .place-info p {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .place-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #718096;
+            font-size: 14px;
+            border-top: 2px solid #e1e8ed;
+            padding-top: 15px;
+        }
+        
+        .rating {
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .filter-section {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .itinerary-day {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #2a5298;
+        }
+        
+        .itinerary-day h4 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .day-places {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .day-place-tag {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 30px;
+            border: 2px solid #e1e8ed;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .day-place-tag button {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .day-place-tag button:hover {
+            color: #dc3545;
+        }
+        
+        .reviews-section {
+            margin-top: 50px;
+        }
+        
+        .review-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ffd700;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .review-author {
+            font-weight: 700;
+            color: #1e3c72;
+            font-size: 18px;
+        }
+        
+        .review-date {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .review-rating {
+            color: #ffd700;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        
+        .review-text {
+            color: #2d3748;
+            line-height: 1.7;
+        }
+        
+        .tour-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tour-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+        }
+        
+        .tour-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .tour-price {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+            padding: 50px 0;
+            margin-top: 70px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-left: 5px solid #2a5298;
+            z-index: 3000;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .loading-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">Ru<span>Map</span></div>
+            <div class="nav-links">
+                <a href="#new-trip">Новое путешествие</a>
+                <a href="#places">Места</a>
+                <a href="#itinerary">Маршруты</a>
+                <a href="#tours">Готовые туры</a>
+                <a href="#reviews">Отзывы</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="hero fade-in">
+            <h1>Откройте Россию с RuMap</h1>
+            <p>Планируйте незабываемые путешествия по самым красивым местам нашей страны. Создавайте маршруты, делитесь впечатлениями и открывайте новое!</p>
+        </div>
+        
+        <section id="new-trip" class="fade-in">
+            <h2 class="section-title">✈️ Новое путешествие</h2>
+            <div class="card">
+                <form id="tripForm">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Название путешествия</label>
+                            <input type="text" id="tripName" placeholder="Например: Золотое кольцо осенью" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Даты поездки</label>
+                            <input type="text" id="tripDates" placeholder="Например: 10-20 августа 2024" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Откуда</label>
+                            <input type="text" id="tripFrom" placeholder="Город отправления">
+                        </div>
+                        <div class="form-group">
+                            <label>Бюджет (₽)</label>
+                            <input type="number" id="tripBudget" placeholder="Примерный бюджет">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Создать маршрут</button>
+                </form>
+            </div>
+        </section>
+        
+        <section style="margin-top: 50px;" class="fade-in">
+            <h2 class="section-title">🔍 Поиск и фильтры</h2>
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Регион / Город</label>
+                        <select id="regionFilter">
+                            <option value="all">Все регионы</option>
+                            <option value="msk">Москва и область</option>
+                            <option value="spb">Санкт-Петербург</option>
+                            <option value="golden">Золотое кольцо</option>
+                            <option value="karelia">Карелия</option>
+                            <option value="altai">Алтай</option>
+                            <option value="crimea">Крым</option>
+                            <option value="baikal">Байкал</option>
+                            <option value="sochi">Сочи</option>
+                            <option value="kazan">Казань</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Бюджет</label>
+                        <select id="budgetFilter">
+                            <option value="all">Любой бюджет</option>
+                            <option value="economy">Эконом (до 5000 ₽/день)</option>
+                            <option value="medium">Средний (5000-15000 ₽/день)</option>
+                            <option value="premium">Премиум (от 15000 ₽/день)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Сортировка</label>
+                        <select id="sortFilter">
+                            <option value="rating">По рейтингу</option>
+                            <option value="name">По названию</option>
+                            <option value="budget_asc">По бюджету (возрастание)</option>
+                            <option value="budget_desc">По бюджету (убывание)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-small" onclick="applyFilters()">Применить</button>
+                    <button class="btn btn-small btn-secondary" onclick="resetFilters()">Сбросить</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="places" class="fade-in">
+            <h2 class="section-title">🏛️ Популярные места России</h2>
+            <div id="loadingPlaces" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Загрузка мест...</p>
+            </div>
+            <div class="places-grid" id="placesGrid"></div>
+        </section>
+        
+        <section id="itinerary" class="fade-in">
+            <h2 class="section-title">📅 План путешествия</h2>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: #1e3c72;" id="currentTripName">Золотое кольцо России</h3>
+                    <button class="btn btn-small btn-secondary" onclick="editTrip()">✏️ Редактировать</button>
+                </div>
+                
+                <div id="itineraryDays"></div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button class="btn btn-small" onclick="addDay()">➕ Добавить день</button>
+                    <button class="btn btn-small btn-secondary" onclick="saveItinerary()">💾 Сохранить маршрут</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="tours" style="margin-top: 50px;" class="fade-in">
+            <h2 class="section-title">🎯 Готовые туры</h2>
+            <div class="grid-3" id="toursGrid"></div>
+        </section>
+        
+        <section id="reviews" class="reviews-section fade-in">
+            <h2 class="section-title">⭐ Отзывы путешественников</h2>
+            
+            <div id="reviewsList"></div>
+            
+            <div class="card" style="margin-top: 30px;">
+                <h3 style="margin-bottom: 20px;">Оставить отзыв</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" id="reviewName" placeholder="Как вас зовут?">
+                    </div>
+                    <div class="form-group">
+                        <label>Оценка</label>
+                        <select id="reviewRating">
+                            <option value="5">5 ★★★★★</option>
+                            <option value="4">4 ★★★★☆</option>
+                            <option value="3">3 ★★★☆☆</option>
+                            <option value="2">2 ★★☆☆☆</option>
+                            <option value="1">1 ★☆☆☆☆</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Ваш отзыв</label>
+                    <textarea id="reviewText" rows="5" placeholder="Поделитесь впечатлениями..."></textarea>
+                </div>
+                <button class="btn" onclick="addReview()">Отправить отзыв</button>
+            </div>
+        </section>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p style="font-size: 24px; font-weight: 800; margin-bottom: 20px;">Ru<span style="color: #ffd700;">Map</span></p>
+            <p style="margin-bottom: 15px; opacity: 0.9;">Планируйте путешествия по России с удовольствием</p>
+            <p style="opacity: 0.7;">© 2024 RuMap - Проект для хакатона студенческих проектов</p>
+            <p style="margin-top: 20px; font-size: 14px; opacity: 0.5;">Сделано с ❤️ для студентов России</p>
+        </div>
+    </footer>
+    
+    <div class="modal" id="placeModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentTrip = {
+            id: 1,
+            name: 'Золотое кольцо России',
+            days: [
+                { day: 1, places: ['Москва', 'Сергиев Посад'] },
+                { day: 2, places: ['Переславль-Залесский', 'Ростов Великий'] },
+                { day: 3, places: ['Ярославль', 'Кострома'] },
+                { day: 4, places: ['Иваново', 'Суздаль'] },
+                { day: 5, places: ['Владимир'] }
+            ]
+        };
+        
+        let allPlaces = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTestPlaces();
+            loadTestTours();
+            loadTestReviews();
+            renderItinerary();
+            
+            document.getElementById('tripForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                createNewTrip();
+            });
+        });
+        
+        function loadTestPlaces() {
+            const testPlaces = [
+                {
+                    id: 1,
+                    name: "Красная площадь",
+                    description: "Главная площадь Москвы с собором Василия Блаженного, мавзолеем и историческим музеем. Символ России, известный во всем мире.",
+                    region: "msk",
+                    budget_level: "medium",
+                    image_url: "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=500",
+                    rating: 4.9
+                },
+                {
+                    id: 2,
+                    name: "Государственный Эрмитаж",
+                    description: "Один из величайших художественных музеев мира с коллекцией более 3 миллионов произведений искусства.",
+                    region: "spb",
+                    budget_level: "premium",
+                    image_url: "https://images.unsplash.com/photo-1559650656-5d1d361ad10e?w=500",
+                    rating: 4.8
+                },
+                {
+                    id: 3,
+                    name: "Остров Кижи",
+                    description: "Музей деревянного зодчества под открытым небом с знаменитой 22-главой Преображенской церковью.",
+                    region: "karelia",
+                    budget_level: "medium",
+                    image_url: "https://images.unsplash.com/photo-1580155405015-5d1793518f7a?w=500",
+                    rating: 4.7
+                },
+                {
+                    id: 4,
+                    name: "Озеро Байкал",
+                    description: "Самое глубокое озеро на планете, содержащее 20% всей пресной воды мира. Уникальная природа и эндемичные виды.",
+                    region: "baikal",
+                    budget_level: "premium",
+                    image_url: "https://images.unsplash.com/photo-1597265822404-7dbb5f0eae1e?w=500",
+                    rating: 5.0
+                },
+                {
+                    id: 5,
+                    name: "Суздаль",
+                    description: "Город-музей, часть Золотого кольца России с многочисленными монастырями, церквями и деревянными постройками.",
+                    region: "golden",
+                    budget_level: "economy",
+                    image_url: "https://images.unsplash.com/photo-1580155405015-5d1793518f7a?w=500",
+                    rating: 4.6
+                },
+                {
+                    id: 6,
+                    name: "Ласточкино гнездо",
+                    description: "Замок на отвесной скале мыса Ай-Тодор, один из символов Крыма и популярнейшая достопримечательность.",
+                    region: "crimea",
+                    budget_level: "medium",
+                    image_url: "https://images.unsplash.com/photo-1596728325487-5c4c6f8b5c3c?w=500",
+                    rating: 4.5
+                }
+            ];
+            allPlaces = testPlaces;
+            renderPlaces(testPlaces);
+        }
+        
+        function loadTestTours() {
+            const tours = [
+                {
+                    id: 1,
+                    name: "Золотое кольцо",
+                    description: "7 дней: Москва, Сергиев Посад, Переславль-Залесский, Ростов Великий, Ярославль, Кострома, Иваново, Суздаль, Владимир",
+                    duration_days: 7,
+                    price: 35000
+                },
+                {
+                    id: 2,
+                    name: "Карельские каникулы",
+                    description: "5 дней: Петрозаводск, Кижи, Валаам, водопад Кивач, горный парк Рускеала",
+                    duration_days: 5,
+                    price: 28000
+                },
+                {
+                    id: 3,
+                    name: "Байкальская сказка",
+                    description: "8 дней: Иркутск, Листвянка, Ольхон, КБЖД, бухты Малого моря",
+                    duration_days: 8,
+                    price: 55000
+                }
+            ];
+            renderTours(tours);
+        }
+        
+        function loadTestReviews() {
+            const reviews = [
+                {
+                    id: 1,
+                    author_name: "Анна Смирнова",
+                    rating: 5,
+                    text: "Потрясающее путешествие по Золотому кольцу! Все организовано на высшем уровне. Особенно понравилось в Суздале и Ростове.",
+                    created_at: "15.07.2024"
+                },
+                {
+                    id: 2,
+                    author_name: "Дмитрий Волков",
+                    rating: 4,
+                    text: "Карелия впечатлила своей суровой красотой. Кижи и Рускеала - must see! Немного не хватило информации о транспорте.",
+                    created_at: "03.06.2024"
+                },
+                {
+                    id: 3,
+                    author_name: "Елена Кузнецова",
+                    rating: 5,
+                    text: "Байкал превзошел все ожидания! Очень удобный планировщик, все даты и места под рукой. Обязательно вернемся!",
+                    created_at: "22.05.2024"
+                }
+            ];
+            renderReviews(reviews);
+        }
+        
+        function renderPlaces(places) {
+            const grid = document.getElementById('placesGrid');
+            grid.innerHTML = '';
+            
+            places.forEach(place => {
+                const stars = '★'.repeat(Math.floor(place.rating)) + '☆'.repeat(5 - Math.floor(place.rating));
+                const budgetText = getBudgetText(place.budget_level);
+                
+                const card = document.createElement('div');
+                card.className = 'place-card';
+                card.onclick = () => showPlaceDetails(place);
+                card.innerHTML = `
+                    <img src="${place.image_url}" alt="${place.name}" class="place-image" onerror="this.src='https://via.placeholder.com/400x300?text=RuMap'">
+                    <div class="place-info">
+                        <h3>${place.name}</h3>
+                        <p>${place.description.substring(0, 100)}...</p>
+                        <div class="place-meta">
+                            <span class="rating">${stars} (${place.rating})</span>
+                            <span>💰 ${budgetText}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function renderTours(tours) {
+            const grid = document.getElementById('toursGrid');
+            grid.innerHTML = '';
+            
+            tours.forEach(tour => {
+                const card = document.createElement('div');
+                card.className = 'tour-card';
+                card.innerHTML = `
+                    <h3>${tour.name}</h3>
+                    <p style="margin: 15px 0; line-height: 1.6;">${tour.description}</p>
+                    <div class="tour-price">${tour.price.toLocaleString()} ₽</div>
+                    <p style="margin-bottom: 20px;">Длительность: ${tour.duration_days} дней</p>
+                    <button class="btn btn-small" style="background: white; color: #1e3c72;" onclick="selectTour('${tour.name}')">Выбрать тур</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsList');
+            container.innerHTML = '';
+            
+            reviews.forEach(review => {
+                const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-author">${review.author_name}</span>
+                        <span class="review-date">${review.created_at}</span>
+                    </div>
+                    <div class="review-rating">${stars}</div>
+                    <p class="review-text">${review.text}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function renderItinerary() {
+            const container = document.getElementById('itineraryDays');
+            container.innerHTML = '';
+            
+            currentTrip.days.forEach((day, index) => {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'itinerary-day';
+                
+                let placesHtml = '';
+                day.places.forEach(place => {
+                    placesHtml += `
+                        <span class="day-place-tag">
+                            ${place}
+                            <button onclick="removePlace(${index}, '${place}')">✕</button>
+                        </span>
+                    `;
+                });
+                
+                dayDiv.innerHTML = `
+                    <h4>День ${day.day}</h4>
+                    <div class="day-places">
+                        ${placesHtml || '<span style="color: #999;">Нет мест</span>'}
+                    </div>
+                `;
+                
+                container.appendChild(dayDiv);
+            });
+        }
+        
+        function getBudgetText(level) {
+            const budgets = {
+                'economy': 'Эконом',
+                'medium': 'Средний',
+                'premium': 'Премиум'
+            };
+            return budgets[level] || level;
+        }
+        
+        function showPlaceDetails(place) {
+            const modal = document.getElementById('placeModal');
+            const content = document.getElementById('modalContent');
+            
+            const stars = '★'.repeat(Math.floor(place.rating)) + '☆'.repeat(5 - Math.floor(place.rating));
+            const budgetText = getBudgetText(place.budget_level);
+            
+            content.innerHTML = `
+                <img src="${place.image_url}" alt="${place.name}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 20px;" onerror="this.src='https://via.placeholder.com/500x300?text=RuMap'">
+                <h2 style="color: #1e3c72; margin-bottom: 15px; font-size: 28px;">${place.name}</h2>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <span class="rating" style="font-size: 20px;">${stars}</span>
+                    <span style="background: #e1e8ed; padding: 5px 15px; border-radius: 20px;">💰 ${budgetText}</span>
+                </div>
+                <p style="line-height: 1.8; margin-bottom: 25px; font-size: 16px;">${place.description}</p>
+                <button class="btn btn-small" onclick="addToItinerary(${place.id})">➕ Добавить в маршрут</button>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('placeModal').classList.remove('active');
+        }
+        
+        function addToItinerary(placeId) {
+            const place = allPlaces.find(p => p.id === placeId);
+            if (!place) return;
+            
+            const dayNum = prompt('На какой день добавить? (1-' + currentTrip.days.length + ')', '1');
+            if (dayNum && dayNum > 0 && dayNum <= currentTrip.days.length) {
+                const index = parseInt(dayNum) - 1;
+                currentTrip.days[index].places.push(place.name);
+                renderItinerary();
+                closeModal();
+                showNotification(`"${place.name}" добавлен в день ${dayNum}`);
+            }
+        }
+        
+        function removePlace(dayIndex, placeName) {
+            const day = currentTrip.days[dayIndex];
+            day.places = day.places.filter(p => p !== placeName);
+            renderItinerary();
+            showNotification(`"${placeName}" удален из маршрута`);
+        }
+        
+        function addDay() {
+            const newDayNum = currentTrip.days.length + 1;
+            currentTrip.days.push({
+                day: newDayNum,
+                places: []
+            });
+            renderItinerary();
+            showNotification(`День ${newDayNum} добавлен`);
+        }
+        
+        function saveItinerary() {
+            showNotification('Маршрут сохранен!');
+        }
+        
+        function editTrip() {
+            const newName = prompt('Введите новое название путешествия:', currentTrip.name);
+            if (newName) {
+                currentTrip.name = newName;
+                document.getElementById('currentTripName').textContent = newName;
+                showNotification('Название изменено');
+            }
+        }
+        
+        function selectTour(tourName) {
+            document.getElementById('tripName').value = tourName;
+            showNotification(`Тур "${tourName}" выбран! Заполните даты.`);
+        }
+        
+        function addReview() {
+            const name = document.getElementById('reviewName').value;
+            const rating = document.getElementById('reviewRating').value;
+            const text = document.getElementById('reviewText').value;
+            
+            if (name && text) {
+                const stars = '★'.repeat(parseInt(rating)) + '☆'.repeat(5 - parseInt(rating));
+                const container = document.getElementById('reviewsList');
+                
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-author">${name}</span>
+                        <span class="review-date">${new Date().toLocaleDateString('ru-RU')}</span>
+                    </div>
+                    <div class="review-rating">${stars}</div>
+                    <p class="review-text">${text}</p>
+                `;
+                
+                container.insertBefore(card, container.firstChild);
+                
+                document.getElementById('reviewName').value = '';
+                document.getElementById('reviewText').value = '';
+                
+                showNotification('Спасибо за отзыв!');
+            } else {
+                showNotification('Заполните имя и текст отзыва', 'error');
+            }
+        }
+        
+        function createNewTrip() {
+            const name = document.getElementById('tripName').value;
+            const dates = document.getElementById('tripDates').value;
+            const from = document.getElementById('tripFrom').value;
+            const budget = document.getElementById('tripBudget').value;
+            
+            currentTrip = {
+                id: Date.now(),
+                name: name,
+                days: [{ day: 1, places: [] }]
+            };
+            
+            document.getElementById('currentTripName').textContent = name;
+            renderItinerary();
+            
+            showNotification(`Путешествие "${name}" создано!`);
+        }
+        
+        function applyFilters() {
+            const region = document.getElementById('regionFilter').value;
+            const budget = document.getElementById('budgetFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            let filtered = [...allPlaces];
+            
+            if (region !== 'all') {
+                filtered = filtered.filter(p => p.region === region);
+            }
+            
+            if (budget !== 'all') {
+                filtered = filtered.filter(p => p.budget_level === budget);
+            }
+            
+            if (sort === 'rating') {
+                filtered.sort((a, b) => b.rating - a.rating);
+            } else if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'budget_asc') {
+                const budgetOrder = { economy: 1, medium: 2, premium: 3 };
+                filtered.sort((a, b) => budgetOrder[a.budget_level] - budgetOrder[b.budget_level]);
+            } else if (sort === 'budget_desc') {
+                const budgetOrder = { economy: 1, medium: 2, premium: 3 };
+                filtered.sort((a, b) => budgetOrder[b.budget_level] - budgetOrder[a.budget_level]);
+            }
+            
+            renderPlaces(filtered);
+            showNotification('Фильтры применены');
+        }
+        
+        function resetFilters() {
+            document.getElementById('regionFilter').value = 'all';
+            document.getElementById('budgetFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'rating';
+            renderPlaces(allPlaces);
+            showNotification('Фильтры сброшены');
+        }
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.borderLeftColor = type === 'success' ? '#2a5298' : '#dc3545';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
